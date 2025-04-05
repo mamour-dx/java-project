@@ -74,8 +74,8 @@ SELECT userId, 0.00 FROM users WHERE username = 'admin';
 1. Cloner le dépôt :
 
 ```bash
-git clone <url-du-depot>
-cd bank-management-system
+git clone https://github.com/mamour-dx/java-project
+cd java-project
 ```
 
 2. Télécharger MySQL Connector/J :
