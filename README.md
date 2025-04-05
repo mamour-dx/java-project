@@ -1,41 +1,41 @@
-# Bank Management System
+# Système de Gestion Bancaire
 
-A console-based banking application that allows users to manage their accounts and perform various banking operations.
+Une application bancaire en console permettant aux utilisateurs de gérer leurs comptes et d'effectuer diverses opérations bancaires.
 
-## Features
+## Fonctionnalités
 
-### For Customers
+### Pour les Clients
 
-- Login (authentication with username and password)
-- Deposit money
-- Withdraw money
-- Check balance
-- Transfer between accounts
-- View transaction history
+- Connexion (authentification avec nom d'utilisateur et mot de passe)
+- Dépôt d'argent
+- Retrait d'argent
+- Consultation du solde
+- Virement entre comptes
+- Consultation de l'historique des transactions
 
-### For Administrators
+### Pour les Administrateurs
 
-- Login
-- User management (add, modify, delete)
-- View all transactions
+- Connexion
+- Gestion des utilisateurs (ajout, modification, suppression)
+- Consultation de toutes les transactions
 
-## Prerequisites
+## Prérequis
 
-- Java JDK 8 or higher
-- XAMPP (for MySQL database)
-- MySQL Connector/J (JDBC driver)
+- Java JDK 8 ou supérieur
+- XAMPP (pour la base de données MySQL)
+- MySQL Connector/J (pilote JDBC)
 
-## Setup Instructions
+## Instructions d'Installation
 
-### 1. Database Setup (Using XAMPP)
+### 1. Configuration de la Base de Données (avec XAMPP)
 
-1. Start XAMPP and ensure MySQL service is running
-2. Open phpMyAdmin (http://localhost/phpmyadmin)
-3. Create a new database named `bank`
-4. Copy and execute the following SQL in phpMyAdmin's SQL tab:
+1. Démarrer XAMPP et s'assurer que le service MySQL est en cours d'exécution
+2. Ouvrir phpMyAdmin (http://localhost/phpmyadmin)
+3. Créer une nouvelle base de données nommée `bank`
+4. Copier et exécuter le SQL suivant dans l'onglet SQL de phpMyAdmin :
 
 ```sql
--- Create users table
+-- Création de la table des utilisateurs
 CREATE TABLE IF NOT EXISTS users (
     userId INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL
 );
 
--- Create accounts table
+-- Création de la table des comptes
 CREATE TABLE IF NOT EXISTS accounts (
     accountId INT PRIMARY KEY AUTO_INCREMENT,
     userId INT NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     FOREIGN KEY (userId) REFERENCES users(userId)
 );
 
--- Create transactions table
+-- Création de la table des transactions
 CREATE TABLE IF NOT EXISTS transactions (
     transactionId INT PRIMARY KEY AUTO_INCREMENT,
     fromAccountId INT NOT NULL,
@@ -63,48 +63,48 @@ CREATE TABLE IF NOT EXISTS transactions (
     FOREIGN KEY (toAccountId) REFERENCES accounts(accountId)
 );
 
--- Insert default admin user
+-- Insertion de l'utilisateur administrateur par défaut
 INSERT INTO users (username, password, role) VALUES ('admin', 'admin', 'ADMIN');
 INSERT INTO accounts (userId, balance)
 SELECT userId, 0.00 FROM users WHERE username = 'admin';
 ```
 
-### 2. Project Setup
+### 2. Configuration du Projet
 
-1. Clone the repository:
+1. Cloner le dépôt :
 
 ```bash
-git clone <repository-url>
+git clone <url-du-depot>
 cd bank-management-system
 ```
 
-2. Download MySQL Connector/J:
+2. Télécharger MySQL Connector/J :
 
-- Go to https://dev.mysql.com/downloads/connector/j/
-- Download the MySQL Connector/J JAR file (version 8.x)
-- Create a `lib` directory in the project root
-- Place the downloaded JAR file in the `lib` directory
+   - Aller sur https://dev.mysql.com/downloads/connector/j/
+   - Télécharger le fichier JAR MySQL Connector/J (version 8.x)
+   - Créer un répertoire `lib` à la racine du projet
+   - Placer le fichier JAR téléchargé dans le répertoire `lib`
 
-3. Compile the project:
+3. Compiler le projet :
 
 ```bash
-javac -cp .:lib/mysql-connector-j-8.x.x.jar src/main/java/main/Main.java src/main/java/model/*.java src/main/java/repository/*.java src/main/java/service/*.java src/main/java/util/*.java
+javac -cp src/main/java:lib/mysql-connector-j-8.x.x.jar src/main/java/main/Main.java src/main/java/model/*.java src/main/java/repository/*.java src/main/java/service/*.java src/main/java/util/*.java
 ```
 
-4. Run the application:
+4. Exécuter l'application :
 
 ```bash
 java -cp src/main/java:lib/mysql-connector-j-8.x.x.jar main.Main
 ```
 
-Note: On Windows, use semicolon (;) instead of colon (:) in the classpath.
+Note : Sous Windows, utiliser le point-virgule (;) au lieu des deux-points (:) dans le classpath.
 
-## Default Admin Account
+## Compte Administrateur par Défaut
 
-- Username: admin
-- Password: admin
+- Nom d'utilisateur : admin
+- Mot de passe : admin
 
-## Project Structure
+## Structure du Projet
 
 ```
 src/main/java/
@@ -127,55 +127,55 @@ src/main/java/
     └── ConsoleInput.java
 ```
 
-## Database Schema
+## Schéma de la Base de Données
 
-### Users Table
+### Table Users
 
-- userId (INT, PRIMARY KEY)
+- userId (INT, CLÉ PRIMAIRE)
 - username (VARCHAR(50), UNIQUE)
 - password (VARCHAR(50))
 - role (VARCHAR(20))
 
-### Accounts Table
+### Table Accounts
 
-- accountId (INT, PRIMARY KEY)
-- userId (INT, FOREIGN KEY)
+- accountId (INT, CLÉ PRIMAIRE)
+- userId (INT, CLÉ ÉTRANGÈRE)
 - balance (DECIMAL(10,2))
 
-### Transactions Table
+### Table Transactions
 
-- transactionId (INT, PRIMARY KEY)
-- fromAccountId (INT, FOREIGN KEY)
-- toAccountId (INT, FOREIGN KEY)
+- transactionId (INT, CLÉ PRIMAIRE)
+- fromAccountId (INT, CLÉ ÉTRANGÈRE)
+- toAccountId (INT, CLÉ ÉTRANGÈRE)
 - amount (DECIMAL(10,2))
 - dateTime (DATETIME)
 - type (VARCHAR(20))
 
-## Security Notes
+## Notes de Sécurité
 
-- This is a prototype application. In a production environment:
-  - Passwords should be hashed
-  - Use prepared statements for all database queries
-  - Implement proper session management
-  - Add input validation and sanitization
-  - Use secure connection (SSL/TLS) for database communication
+- Ceci est une application prototype. En environnement de production :
+  - Les mots de passe devraient être hachés
+  - Utiliser des requêtes préparées pour toutes les opérations sur la base de données
+  - Implémenter une gestion de session appropriée
+  - Ajouter une validation et une désinfection des entrées
+  - Utiliser une connexion sécurisée (SSL/TLS) pour la communication avec la base de données
 
-## Troubleshooting
+## Résolution des Problèmes
 
-1. Database Connection Issues:
+1. Problèmes de Connexion à la Base de Données :
 
-   - Ensure XAMPP MySQL service is running
-   - Verify database name is "bank"
-   - Check if tables are created correctly in phpMyAdmin
-   - Default connection uses root user with no password
+   - Vérifier que le service MySQL de XAMPP est en cours d'exécution
+   - Vérifier que le nom de la base de données est "bank"
+   - Vérifier que les tables sont correctement créées dans phpMyAdmin
+   - La connexion par défaut utilise l'utilisateur root sans mot de passe
 
-2. Compilation Issues:
+2. Problèmes de Compilation :
 
-   - Ensure Java JDK is installed and JAVA_HOME is set
-   - Verify MySQL Connector/J is in the lib directory
-   - Check classpath includes both src/main/java and the MySQL connector
+   - Vérifier que Java JDK est installé et que JAVA_HOME est configuré
+   - Vérifier que MySQL Connector/J est dans le répertoire lib
+   - Vérifier que le classpath inclut à la fois src/main/java et le connecteur MySQL
 
-3. Runtime Issues:
-   - Make sure all required files are compiled
-   - Verify classpath includes both src/main/java and the MySQL connector
-   - Check for any error messages in the console.
+3. Problèmes d'Exécution :
+   - S'assurer que tous les fichiers nécessaires sont compilés
+   - Vérifier que le classpath inclut à la fois src/main/java et le connecteur MySQL
+   - Vérifier les messages d'erreur dans la console
