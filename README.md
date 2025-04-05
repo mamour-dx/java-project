@@ -80,6 +80,20 @@ cd java-project
 
 2. Télécharger MySQL Connector/J :
 
+   Sur Mac (avec Homebrew) :
+
+   ```bash
+   brew install mysql-connector-j
+   ```
+
+   Sur Windows (avec Chocolatey) :
+
+   ```bash
+   choco install mysql-connector-j
+   ```
+
+   Ou manuellement :
+
    - Aller sur https://dev.mysql.com/downloads/connector/j/
    - Télécharger le fichier JAR MySQL Connector/J (version 8.x)
    - Créer un répertoire `lib` à la racine du projet
