@@ -1,0 +1,34 @@
+# Compiled class files
+*.class
+
+# IDE-specific files
+.idea/
+.vscode/
+*.iml
+.project
+.classpath
+.settings/
+
+# Build directories
+target/
+build/
+out/
+
+# Logs
+*.log
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# XAMPP specific
+xampp/ 
