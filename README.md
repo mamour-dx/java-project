@@ -178,4 +178,4 @@ src/main/java/
 3. Runtime Issues:
    - Make sure all required files are compiled
    - Verify classpath includes both src/main/java and the MySQL connector
-   - Check for any error messages in the console
+   - Check for any error messages in the console.
