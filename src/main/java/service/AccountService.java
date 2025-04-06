@@ -7,6 +7,7 @@ import repository.TransactionRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccountService {
@@ -22,16 +23,16 @@ public class AccountService {
         return accountRepository.findByUserId(userId);
     }
 
-    public void deposit(int accountId, double amount) throws SQLException {
-        Account account = accountRepository.findByUserId(accountId);
+    public void deposit(int userId, double amount) throws SQLException {
+        Account account = accountRepository.findByUserId(userId);
         if (account != null) {
             double newBalance = account.getBalance() + amount;
-            accountRepository.updateBalance(accountId, newBalance);
+            accountRepository.updateBalance(userId, newBalance);
 
             Transaction transaction = new Transaction(
                     0, // ID will be set by the database
-                    accountId,
-                    accountId,
+                    account.getAccountId(),
+                    account.getAccountId(),
                     amount,
                     LocalDateTime.now(),
                     "DEPOSIT");
@@ -39,16 +40,16 @@ public class AccountService {
         }
     }
 
-    public void withdraw(int accountId, double amount) throws SQLException {
-        Account account = accountRepository.findByUserId(accountId);
+    public void withdraw(int userId, double amount) throws SQLException {
+        Account account = accountRepository.findByUserId(userId);
         if (account != null && account.getBalance() >= amount) {
             double newBalance = account.getBalance() - amount;
-            accountRepository.updateBalance(accountId, newBalance);
+            accountRepository.updateBalance(userId, newBalance);
 
             Transaction transaction = new Transaction(
                     0, // ID will be set by the database
-                    accountId,
-                    accountId,
+                    account.getAccountId(),
+                    account.getAccountId(),
                     amount,
                     LocalDateTime.now(),
                     "WITHDRAWAL");
@@ -56,24 +57,24 @@ public class AccountService {
         }
     }
 
-    public void transfer(int fromAccountId, int toAccountId, double amount) throws SQLException {
-        Account fromAccount = accountRepository.findByUserId(fromAccountId);
-        Account toAccount = accountRepository.findByUserId(toAccountId);
+    public void transfer(int fromUserId, int toUserId, double amount) throws SQLException {
+        Account fromAccount = accountRepository.findByUserId(fromUserId);
+        Account toAccount = accountRepository.findByUserId(toUserId);
 
         if (fromAccount != null && toAccount != null && fromAccount.getBalance() >= amount) {
             // Update source account
             double newFromBalance = fromAccount.getBalance() - amount;
-            accountRepository.updateBalance(fromAccountId, newFromBalance);
+            accountRepository.updateBalance(fromUserId, newFromBalance);
 
             // Update destination account
             double newToBalance = toAccount.getBalance() + amount;
-            accountRepository.updateBalance(toAccountId, newToBalance);
+            accountRepository.updateBalance(toUserId, newToBalance);
 
             // Create transaction record
             Transaction transaction = new Transaction(
                     0, // ID will be set by the database
-                    fromAccountId,
-                    toAccountId,
+                    fromAccount.getAccountId(),
+                    toAccount.getAccountId(),
                     amount,
                     LocalDateTime.now(),
                     "TRANSFER");
@@ -81,11 +82,23 @@ public class AccountService {
         }
     }
 
-    public List<Transaction> getTransactionHistory(int accountId) throws SQLException {
-        return transactionRepository.findByAccountId(accountId);
+    public List<Transaction> getTransactionHistory(int userId) throws SQLException {
+        Account account = accountRepository.findByUserId(userId);
+        if (account != null) {
+            return transactionRepository.findByAccountId(account.getAccountId());
+        }
+        return new ArrayList<>();
     }
 
     public List<Transaction> getAllTransactions() throws SQLException {
         return transactionRepository.findAll();
+    }
+
+    public void createAccountIfNotExists(int userId) throws SQLException {
+        Account account = accountRepository.findByUserId(userId);
+        if (account == null) {
+            Account newAccount = new Account(0, userId, 0.0);
+            accountRepository.create(newAccount);
+        }
     }
 }
