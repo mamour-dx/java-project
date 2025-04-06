@@ -28,16 +28,23 @@ public class UserRepository {
         return null;
     }
 
-    public void create(User user) throws SQLException {
+    public int create(User user) throws SQLException {
         String sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getRole());
             stmt.executeUpdate();
+
+            // Get the generated user ID
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         }
+        return -1; // Return -1 if no ID was generated (should not happen)
     }
 
     public void update(User user) throws SQLException {
