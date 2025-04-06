@@ -129,16 +129,29 @@ public class Main {
     }
 
     private static void checkBalance() throws SQLException {
-        Account account = accountService.getAccountByUserId(authService.getCurrentUser().getUserId());
+        int userId = authService.getCurrentUser().getUserId();
+        // Create account if it doesn't exist
+        accountService.createAccountIfNotExists(userId);
+
+        // Now get the account (should exist now)
+        Account account = accountService.getAccountByUserId(userId);
         if (account != null) {
-            System.out.println("Current balance: " + account.getBalance());
+            System.out.println("\n=== Account Balance ===");
+            System.out.println("Account ID: " + account.getAccountId());
+            System.out.println("Current balance: $" + String.format("%.2f", account.getBalance()));
+        } else {
+            System.out.println("Account not found!");
         }
     }
 
     private static void deposit() throws SQLException {
+        int userId = authService.getCurrentUser().getUserId();
+        // Create account if it doesn't exist
+        accountService.createAccountIfNotExists(userId);
+
         double amount = ConsoleInput.readDouble("Enter amount to deposit: ");
         if (amount > 0) {
-            accountService.deposit(authService.getCurrentUser().getUserId(), amount);
+            accountService.deposit(userId, amount);
             System.out.println("Deposit successful!");
         } else {
             System.out.println("Invalid amount!");
@@ -146,9 +159,13 @@ public class Main {
     }
 
     private static void withdraw() throws SQLException {
+        int userId = authService.getCurrentUser().getUserId();
+        // Create account if it doesn't exist
+        accountService.createAccountIfNotExists(userId);
+
         double amount = ConsoleInput.readDouble("Enter amount to withdraw: ");
         if (amount > 0) {
-            accountService.withdraw(authService.getCurrentUser().getUserId(), amount);
+            accountService.withdraw(userId, amount);
             System.out.println("Withdrawal successful!");
         } else {
             System.out.println("Invalid amount!");
@@ -156,13 +173,17 @@ public class Main {
     }
 
     private static void transfer() throws SQLException {
+        int fromUserId = authService.getCurrentUser().getUserId();
+        // Create account if it doesn't exist for current user
+        accountService.createAccountIfNotExists(fromUserId);
+
         int toUserId = ConsoleInput.readInt("Enter recipient user ID: ");
+        // Create account if it doesn't exist for recipient
+        accountService.createAccountIfNotExists(toUserId);
+
         double amount = ConsoleInput.readDouble("Enter amount to transfer: ");
         if (amount > 0) {
-            accountService.transfer(
-                    authService.getCurrentUser().getUserId(),
-                    toUserId,
-                    amount);
+            accountService.transfer(fromUserId, toUserId, amount);
             System.out.println("Transfer successful!");
         } else {
             System.out.println("Invalid amount!");
@@ -170,12 +191,19 @@ public class Main {
     }
 
     private static void showTransactionHistory() throws SQLException {
-        List<Transaction> transactions = accountService.getTransactionHistory(
-                authService.getCurrentUser().getUserId());
+        int userId = authService.getCurrentUser().getUserId();
+        // Create account if it doesn't exist
+        accountService.createAccountIfNotExists(userId);
+
+        List<Transaction> transactions = accountService.getTransactionHistory(userId);
         System.out.println("\n=== Transaction History ===");
-        for (Transaction transaction : transactions) {
-            System.out.println(transaction.getDateTime() + " - " +
-                    transaction.getType() + " - Amount: " + transaction.getAmount());
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+        } else {
+            for (Transaction transaction : transactions) {
+                System.out.println(transaction.getDateTime() + " - " +
+                        transaction.getType() + " - Amount: $" + String.format("%.2f", transaction.getAmount()));
+            }
         }
     }
 
@@ -216,11 +244,15 @@ public class Main {
     private static void listAllTransactions() throws SQLException {
         List<Transaction> transactions = accountService.getAllTransactions();
         System.out.println("\n=== All Transactions ===");
-        for (Transaction transaction : transactions) {
-            System.out.println(transaction.getDateTime() + " - " +
-                    transaction.getType() + " - Amount: " + transaction.getAmount() +
-                    " - From: " + transaction.getFromAccountId() +
-                    " - To: " + transaction.getToAccountId());
+        if (transactions.isEmpty()) {
+            System.out.println("No transactions found.");
+        } else {
+            for (Transaction transaction : transactions) {
+                System.out.println(transaction.getDateTime() + " - " +
+                        transaction.getType() + " - Amount: $" + String.format("%.2f", transaction.getAmount()) +
+                        " - From: " + transaction.getFromAccountId() +
+                        " - To: " + transaction.getToAccountId());
+            }
         }
     }
 }
