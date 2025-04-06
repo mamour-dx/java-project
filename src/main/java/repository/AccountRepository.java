@@ -38,13 +38,13 @@ public class AccountRepository {
         }
     }
 
-    public void updateBalance(int accountId, double newBalance) throws SQLException {
-        String sql = "UPDATE accounts SET balance = ? WHERE accountId = ?";
+    public void updateBalance(int userId, double newBalance) throws SQLException {
+        String sql = "UPDATE accounts SET balance = ? WHERE userId = ?";
         try (Connection conn = DBConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setDouble(1, newBalance);
-            stmt.setInt(2, accountId);
+            stmt.setInt(2, userId);
             stmt.executeUpdate();
         }
     }
